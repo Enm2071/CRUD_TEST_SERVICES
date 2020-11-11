@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CRUD_TEST.DATA\CRUD_TEST.DATA.csproj" />
+    <ProjectReference Include="..\CRUD_TEST.MODELS\CRUD_TEST.MODELS.csproj" />
+  </ItemGroup>
+
+</Project>
