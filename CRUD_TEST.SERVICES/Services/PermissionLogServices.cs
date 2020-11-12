@@ -12,7 +12,7 @@ namespace CRUD_TEST.SERVICES.Services
     public interface IPermissionLogServices
     {
         void SavePermisionLog();
-        Response Create(PermissionDto data,string action);
+        Response<PermissionDto> Create(PermissionDto data, string action);
     }
 
     public class PermissionLogServices : IPermissionLogServices
@@ -31,9 +31,9 @@ namespace CRUD_TEST.SERVICES.Services
             _dbcontext.SaveChanges();
         }
 
-        public Response Create(PermissionDto data,string action)
+        public Response<PermissionDto> Create(PermissionDto data, string action)
         {
-            var response = new Response{Action = action};
+            var response = new Response<PermissionDto> { Action = action };
 
             var permisionLog = new PermissionLog
             {
@@ -49,7 +49,7 @@ namespace CRUD_TEST.SERVICES.Services
                 _permissionLogs.Add(permisionLog);
                 SavePermisionLog();
                 response.Succeed = true;
-                response.Permission.Add(data);
+                response.Body.Add(data);
                 return response;
             }
             catch (Exception e)

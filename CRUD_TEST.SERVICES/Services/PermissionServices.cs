@@ -11,11 +11,11 @@ namespace CRUD_TEST.SERVICES.Services
     public interface IPermissionServices
     {
         void SavePermission();
-        Response Create(PermissionDto data);
-        Response Delete(int id);
-        Response Edit(PermissionDto data,int id);
-        Response SelectAll();
-        Response Select(int id);
+        Response<PermissionDto> Create(PermissionDto data);
+        Response<PermissionDto> Delete(int id);
+        Response<PermissionDto> Edit(PermissionDto data, int id);
+        Response<PermissionDto> SelectAll();
+        Response<PermissionDto> Select(int id);
 
     }
 
@@ -24,7 +24,7 @@ namespace CRUD_TEST.SERVICES.Services
         private readonly ApplicationDbcontext _dbcontext;
         private readonly DbSet<Permission> _permissions;
         private readonly IPermissionLogServices _permissionLogServices;
-        
+
         public PermissionServices(IDbFactory db, IPermissionLogServices permissionLogServices)
         {
             _permissionLogServices = permissionLogServices;
@@ -37,7 +37,7 @@ namespace CRUD_TEST.SERVICES.Services
             _dbcontext.SaveChanges();
         }
 
-        public Response Create(PermissionDto data)
+        public Response<PermissionDto> Create(PermissionDto data)
         {
             var permission = new Permission
             {
@@ -46,15 +46,15 @@ namespace CRUD_TEST.SERVICES.Services
                 EmployeeName = data.EmployeeName,
                 PermissionTypeId = data.PermissionTypeId
             };
-            var response = new Response {Action = "Create"};
+            var response = new Response<PermissionDto> { Action = "Create" };
             try
             {
                 _permissions.Add(permission);
                 SavePermission();
                 response.Succeed = true;
-                response.Permission.Add(data);
+                response.Body.Add(data);
 
-                var responseLog =_permissionLogServices.Create(data, "Create");
+                var responseLog = _permissionLogServices.Create(data, "Create");
                 if (!responseLog.Succeed)
                 {
                     response.Error = new Error
@@ -67,16 +67,16 @@ namespace CRUD_TEST.SERVICES.Services
             }
             catch (Exception e)
             {
-                response.Error = new Error {Name = e.Source, Detail = e.Message};
+                response.Error = new Error { Name = e.Source, Detail = e.Message };
                 return response;
             }
 
         }
 
-        public Response Delete(int id)
+        public Response<PermissionDto> Delete(int id)
         {
             var permission = _permissions.SingleOrDefault(p => p.Id == id);
-            var response = new Response {Action = "Delete"};
+            var response = new Response<PermissionDto> { Action = "Delete" };
 
             if (permission == null)
             {
@@ -99,7 +99,7 @@ namespace CRUD_TEST.SERVICES.Services
                     EmployeeName = permission.EmployeeName,
                     PermissionTypeId = permission.PermissionTypeId
                 };
-                response.Permission.Add(data);
+                response.Body.Add(data);
 
                 var responseLog = _permissionLogServices.Create(data, "Delete");
                 if (!responseLog.Succeed)
@@ -125,11 +125,11 @@ namespace CRUD_TEST.SERVICES.Services
 
         }
 
-        public Response Edit(PermissionDto data, int id)
+        public Response<PermissionDto> Edit(PermissionDto data, int id)
         {
             var permission = _permissions.SingleOrDefault(p => p.Id == id);
-            var response = new Response{Action = "Edit"};
-            
+            var response = new Response<PermissionDto> { Action = "Edit" };
+
             if (permission == null)
             {
                 response.Error = new Error
@@ -154,7 +154,7 @@ namespace CRUD_TEST.SERVICES.Services
             {
                 SavePermission();
                 response.Succeed = true;
-                response.Permission.Add(data);
+                response.Body.Add(data);
                 var responseLog = _permissionLogServices.Create(permissionLogData, "Edit");
                 if (!responseLog.Succeed)
                 {
@@ -178,9 +178,9 @@ namespace CRUD_TEST.SERVICES.Services
 
         }
 
-        public Response SelectAll()
+        public Response<PermissionDto> SelectAll()
         {
-            var response = new Response{Action = "SelectAll"};
+            var response = new Response<PermissionDto> { Action = "SelectAll" };
             try
             {
                 var permissions = _permissions.Select(p => new PermissionDto
@@ -190,7 +190,7 @@ namespace CRUD_TEST.SERVICES.Services
                     PermissionTypeId = p.PermissionTypeId,
                     Id = p.Id
                 });
-                response.Permission.AddRange(permissions);
+                response.Body.AddRange(permissions);
                 response.Succeed = true;
                 return response;
             }
@@ -205,9 +205,9 @@ namespace CRUD_TEST.SERVICES.Services
             }
         }
 
-        public Response Select(int id)
+        public Response<PermissionDto> Select(int id)
         {
-            var response = new Response{Action = "Select"};
+            var response = new Response<PermissionDto> { Action = "Select" };
             try
             {
 
@@ -230,12 +230,12 @@ namespace CRUD_TEST.SERVICES.Services
                     PermissionTypeId = permission.PermissionTypeId,
                     Id = permission.Id
                 };
-                response.Permission.Add(data);
+                response.Body.Add(data);
                 return response;
             }
             catch (Exception e)
             {
-                response.Error= new Error
+                response.Error = new Error
                 {
                     Name = e.Source,
                     Detail = e.Message
