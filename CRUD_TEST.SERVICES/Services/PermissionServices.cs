@@ -1,5 +1,8 @@
-﻿using CRUD_TEST.DATA.Context;
+﻿using System;
+using System.Linq;
+using CRUD_TEST.DATA.Context;
 using CRUD_TEST.DATA.Infraestructure;
+using CRUD_TEST.MODELS.Dtos;
 using CRUD_TEST.MODELS.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +11,11 @@ namespace CRUD_TEST.SERVICES.Services
     public interface IPermissionServices
     {
         void SavePermission();
+        Response Create(PermissionDto data);
+        Response Delete(int id);
+        Response Edit(PermissionDto data,int id);
+        Response SelectAll();
+
     }
 
     public class PermissionServices : IPermissionServices
@@ -24,6 +32,136 @@ namespace CRUD_TEST.SERVICES.Services
         public void SavePermission()
         {
             _dbcontext.SaveChanges();
+        }
+
+        public Response Create(PermissionDto data)
+        {
+            var permission = new Permission
+            {
+                Date = DateTime.Now,
+                EmployeeLastName = data.EmployeeLastName,
+                EmployeeName = data.EmployeeName,
+                PermissionTypeId = data.PermissionTypeId
+            };
+            var response = new Response {Action = "Create"};
+            try
+            {
+                _permissions.Add(permission);
+                SavePermission();
+                response.Succeed = true;
+                response.Permission.Add(data);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Error = new Error {Name = e.Source, Detail = e.Message};
+                return response;
+            }
+
+        }
+
+        public Response Delete(int id)
+        {
+            var permission = _permissions.SingleOrDefault(p => p.Id == id);
+            var response = new Response {Action = "Delete"};
+
+            if (permission == null)
+            {
+                response.Error = new Error
+                {
+                    Name = "NotFound",
+                    Detail = "The permission your are trying to deleted can not be found"
+                };
+                return response;
+            }
+
+            try
+            {
+                _permissions.Remove(permission);
+                SavePermission();
+                response.Succeed = true;
+                response.Permission.Add(new PermissionDto
+                {
+                    EmployeeLastName = permission.EmployeeLastName, 
+                    EmployeeName = permission.EmployeeName,
+                    PermissionTypeId = permission.PermissionTypeId
+                });
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Error = new Error
+                {
+                    Name = e.Source,
+                    Detail = e.Message
+                };
+                return response;
+            }
+
+        }
+
+        public Response Edit(PermissionDto data, int id)
+        {
+            var permission = _permissions.SingleOrDefault(p => p.Id == id);
+            var response = new Response{Action = "Edit"};
+            if (permission == null)
+            {
+                response.Error = new Error
+                {
+                    Name = "NotFound",
+                    Detail = "The permission your are trying to edit can not be found"
+                };
+                return response;
+            }
+
+            permission.EmployeeLastName = data.EmployeeLastName;
+            permission.EmployeeName = data.EmployeeName;
+            permission.PermissionTypeId = data.PermissionTypeId;
+
+            try
+            {
+                SavePermission();
+                response.Succeed = true;
+                response.Permission.Add(data);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Error = new Error
+                {
+                    Name = e.Source,
+                    Detail = e.Message
+                };
+                return response;
+            }
+
+        }
+
+        public Response SelectAll()
+        {
+            var response = new Response{Action = "SelectAll"};
+            try
+            {
+                var permissions = _permissions.Select(p => new PermissionDto
+                {
+                    EmployeeLastName = p.EmployeeLastName,
+                    EmployeeName = p.EmployeeName,
+                    PermissionTypeId = p.PermissionTypeId
+                });
+                response.Permission.AddRange(permissions);
+                response.Succeed = true;
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Error = new Error
+                {
+                    Name = e.Source,
+                    Detail = e.Message
+                };
+                return response;
+            }
         }
     }
 }

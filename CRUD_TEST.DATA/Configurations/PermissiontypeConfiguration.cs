@@ -8,7 +8,7 @@ namespace CRUD_TEST.DATA.Configurations
     {
         public void Configure(EntityTypeBuilder<PermissionType> builder)
         {
-            builder.Property(tp => tp.Descripcion).IsRequired();
+            builder.Property(tp => tp.Description).IsRequired();
         }
     }
 }

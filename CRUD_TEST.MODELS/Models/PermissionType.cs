@@ -3,7 +3,6 @@
     public class PermissionType
     {
         public int Id { get; set; }
-        public string Descripcion { get; set; }
-        public Permission Permission { get; set; }
+        public string Description { get; set; }
     }
 }
