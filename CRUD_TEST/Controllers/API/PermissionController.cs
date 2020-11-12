@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CRUD_TEST.Controllers.API
 {
     [Route("api/permission")]
-    [EnableCors]
+    [EnableCors("MyPolicy")]
     [ApiController]
     public class PermissionController : ControllerBase
     {
@@ -18,7 +18,6 @@ namespace CRUD_TEST.Controllers.API
         {
             _permissionServices = permissionServices;
         }
-
 
         [HttpGet("get/{id}")]
         public Response<PermissionDto> Select(int id)
