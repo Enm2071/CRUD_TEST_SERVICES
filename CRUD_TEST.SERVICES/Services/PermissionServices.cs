@@ -13,9 +13,9 @@ namespace CRUD_TEST.SERVICES.Services
         void SavePermission();
         Response<PermissionDto> Create(PermissionDto data);
         Response<PermissionDto> Delete(int id);
-        Response<PermissionDto> Edit(PermissionDto data, int id);
-        Response<PermissionDto> SelectAll();
-        Response<PermissionDto> Select(int id);
+        Response<PermissionDto> Update(PermissionDto data, int id);
+        Response<PermissionDto> GetAll();
+        Response<PermissionDto> Get(int id);
 
     }
 
@@ -125,10 +125,10 @@ namespace CRUD_TEST.SERVICES.Services
 
         }
 
-        public Response<PermissionDto> Edit(PermissionDto data, int id)
+        public Response<PermissionDto> Update(PermissionDto data, int id)
         {
             var permission = _permissions.SingleOrDefault(p => p.Id == id);
-            var response = new Response<PermissionDto> { Action = "Edit" };
+            var response = new Response<PermissionDto> { Action = "Update" };
 
             if (permission == null)
             {
@@ -155,7 +155,7 @@ namespace CRUD_TEST.SERVICES.Services
                 SavePermission();
                 response.Succeed = true;
                 response.Body.Add(data);
-                var responseLog = _permissionLogServices.Create(permissionLogData, "Edit");
+                var responseLog = _permissionLogServices.Create(permissionLogData, "Update");
                 if (!responseLog.Succeed)
                 {
                     response.Error = new Error
@@ -178,9 +178,9 @@ namespace CRUD_TEST.SERVICES.Services
 
         }
 
-        public Response<PermissionDto> SelectAll()
+        public Response<PermissionDto> GetAll()
         {
-            var response = new Response<PermissionDto> { Action = "SelectAll" };
+            var response = new Response<PermissionDto> { Action = "GetAll" };
             try
             {
                 var permissions = _permissions.Select(p => new PermissionDto
@@ -205,9 +205,9 @@ namespace CRUD_TEST.SERVICES.Services
             }
         }
 
-        public Response<PermissionDto> Select(int id)
+        public Response<PermissionDto> Get(int id)
         {
-            var response = new Response<PermissionDto> { Action = "Select" };
+            var response = new Response<PermissionDto> { Action = "Get" };
             try
             {
 

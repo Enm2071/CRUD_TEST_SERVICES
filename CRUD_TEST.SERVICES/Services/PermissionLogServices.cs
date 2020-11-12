@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using CRUD_TEST.DATA.Context;
 using CRUD_TEST.DATA.Infraestructure;
 using CRUD_TEST.MODELS.Dtos;

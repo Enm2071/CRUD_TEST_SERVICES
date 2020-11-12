@@ -10,7 +10,7 @@ namespace CRUD_TEST.SERVICES.Services
     public interface IPermissionTypeServices
     {
         void SavePermissionType();
-        Response<PermissionTypeDto> SelectAll();
+        Response<PermissionTypeDto> GetAll();
     }
 
     public class PermissionTypeServices : IPermissionTypeServices
@@ -29,9 +29,9 @@ namespace CRUD_TEST.SERVICES.Services
             _dbcontext.SaveChanges();
         }
 
-        public Response<PermissionTypeDto> SelectAll()
+        public Response<PermissionTypeDto> GetAll()
         {
-            var response = new Response<PermissionTypeDto> { Action = "SelectAll" };
+            var response = new Response<PermissionTypeDto> { Action = "GetAll" };
             try
             {
                 var permissionTypes = _permissionTypes.Select(pt => new PermissionTypeDto

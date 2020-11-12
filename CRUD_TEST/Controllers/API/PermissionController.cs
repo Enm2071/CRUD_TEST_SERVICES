@@ -20,36 +20,36 @@ namespace CRUD_TEST.Controllers.API
         }
 
 
-        [HttpGet("select/{id}")]
-        public Response Select(int id)
+        [HttpGet("get/{id}")]
+        public Response<PermissionDto> Select(int id)
         {
-            var response = _permissionServices.Select(id);
+            var response = _permissionServices.Get(id);
             return response;
         }
 
-        [HttpGet("select/all")]
-        public Response All()
+        [HttpGet("get/all")]
+        public Response<PermissionDto> All()
         {
-            var response = _permissionServices.SelectAll();
+            var response = _permissionServices.GetAll();
             return response;
         }
 
         [HttpPost("create")]
-        public Response Create(PermissionDto data)
+        public Response<PermissionDto> Create(PermissionDto data)
         {
             var response = _permissionServices.Create(data);
             return response;
         }
 
-        [HttpPost("edit/{id}")]
-        public Response Edit(PermissionDto data,int id)
+        [HttpPost("update/{id}")]
+        public Response<PermissionDto> Update(PermissionDto data, int id)
         {
-            var response = _permissionServices.Edit(data,id);
+            var response = _permissionServices.Update(data, id);
             return response;
         }
 
         [HttpPost("delete/{id}")]
-        public Response Delete(int id)
+        public Response<PermissionDto> Delete(int id)
         {
             var response = _permissionServices.Delete(id);
             return response;
