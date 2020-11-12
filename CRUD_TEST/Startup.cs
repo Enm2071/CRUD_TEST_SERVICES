@@ -35,16 +35,21 @@ namespace CRUD_TEST
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddCors(c =>
+            {
+                c.AddPolicy("MyPolicy", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            });
+
             services.AddDbContext<ApplicationDbcontext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbcontext>();
 
-            services.AddCors(c =>
-            {
-                c.AddPolicy("allow",options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            });
+            //services.AddCors(c =>
+            //{
+            //    c.AddPolicy("allow", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            //});
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
