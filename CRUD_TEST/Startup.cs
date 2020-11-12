@@ -41,6 +41,11 @@ namespace CRUD_TEST
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbcontext>();
 
+            services.AddCors(c =>
+            {
+                c.AddPolicy("allow",options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var builder = new ContainerBuilder();
@@ -49,6 +54,7 @@ namespace CRUD_TEST
             builder.RegisterType<DbFactory>().As<IDbFactory>();
             builder.RegisterType<PermissionTypeServices>().As<IPermissionTypeServices>();
             builder.RegisterType<PermissionServices>().As<IPermissionServices>();
+            builder.RegisterType<PermissionLogServices>().As<IPermissionLogServices>();
 
             // Services
             builder.RegisterAssemblyTypes(typeof(PermissionServices).Assembly)
@@ -56,6 +62,10 @@ namespace CRUD_TEST
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             builder.RegisterAssemblyTypes(typeof(PermissionTypeServices).Assembly)
+                .Where(t => t.Name.EndsWith("Services"))
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(typeof(PermissionLogServices).Assembly)
                 .Where(t => t.Name.EndsWith("Services"))
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
@@ -76,6 +86,10 @@ namespace CRUD_TEST
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCors(p => p.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

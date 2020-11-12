@@ -11,11 +11,13 @@ namespace CRUD_TEST.DATA.Context
 
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<PermissionType> PermissionTypes { get; set; }
+        public DbSet<PermissionLog> PermissionLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new PermissiontypeConfiguration());
             modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+            modelBuilder.ApplyConfiguration(new PermissionLogConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

@@ -15,6 +15,7 @@ namespace CRUD_TEST.SERVICES.Services
         Response Delete(int id);
         Response Edit(PermissionDto data,int id);
         Response SelectAll();
+        Response Select(int id);
 
     }
 
@@ -22,9 +23,11 @@ namespace CRUD_TEST.SERVICES.Services
     {
         private readonly ApplicationDbcontext _dbcontext;
         private readonly DbSet<Permission> _permissions;
-
-        public PermissionServices(IDbFactory db)
+        private readonly IPermissionLogServices _permissionLogServices;
+        
+        public PermissionServices(IDbFactory db, IPermissionLogServices permissionLogServices)
         {
+            _permissionLogServices = permissionLogServices;
             _dbcontext = db.Init();
             _permissions = db.Init().Permissions;
         }
@@ -50,6 +53,16 @@ namespace CRUD_TEST.SERVICES.Services
                 SavePermission();
                 response.Succeed = true;
                 response.Permission.Add(data);
+
+                var responseLog =_permissionLogServices.Create(data, "Create");
+                if (!responseLog.Succeed)
+                {
+                    response.Error = new Error
+                    {
+                        Name = "¡Permission Log Error!",
+                        Detail = "We could not add log for this action"
+                    };
+                }
                 return response;
             }
             catch (Exception e)
@@ -80,12 +93,23 @@ namespace CRUD_TEST.SERVICES.Services
                 _permissions.Remove(permission);
                 SavePermission();
                 response.Succeed = true;
-                response.Permission.Add(new PermissionDto
+                var data = new PermissionDto
                 {
-                    EmployeeLastName = permission.EmployeeLastName, 
+                    EmployeeLastName = permission.EmployeeLastName,
                     EmployeeName = permission.EmployeeName,
                     PermissionTypeId = permission.PermissionTypeId
-                });
+                };
+                response.Permission.Add(data);
+
+                var responseLog = _permissionLogServices.Create(data, "Delete");
+                if (!responseLog.Succeed)
+                {
+                    response.Error = new Error
+                    {
+                        Name = "¡Permission Log Error!",
+                        Detail = "We could not add log for this action"
+                    };
+                }
 
                 return response;
             }
@@ -105,6 +129,7 @@ namespace CRUD_TEST.SERVICES.Services
         {
             var permission = _permissions.SingleOrDefault(p => p.Id == id);
             var response = new Response{Action = "Edit"};
+            
             if (permission == null)
             {
                 response.Error = new Error
@@ -114,6 +139,12 @@ namespace CRUD_TEST.SERVICES.Services
                 };
                 return response;
             }
+            var permissionLogData = new PermissionDto
+            {
+                PermissionTypeId = permission.PermissionTypeId,
+                EmployeeLastName = permission.EmployeeLastName,
+                EmployeeName = permission.EmployeeName
+            };
 
             permission.EmployeeLastName = data.EmployeeLastName;
             permission.EmployeeName = data.EmployeeName;
@@ -124,6 +155,15 @@ namespace CRUD_TEST.SERVICES.Services
                 SavePermission();
                 response.Succeed = true;
                 response.Permission.Add(data);
+                var responseLog = _permissionLogServices.Create(permissionLogData, "Edit");
+                if (!responseLog.Succeed)
+                {
+                    response.Error = new Error
+                    {
+                        Name = "¡Permission Log Error!",
+                        Detail = "We could not add log for this action"
+                    };
+                }
                 return response;
             }
             catch (Exception e)
@@ -147,7 +187,8 @@ namespace CRUD_TEST.SERVICES.Services
                 {
                     EmployeeLastName = p.EmployeeLastName,
                     EmployeeName = p.EmployeeName,
-                    PermissionTypeId = p.PermissionTypeId
+                    PermissionTypeId = p.PermissionTypeId,
+                    Id = p.Id
                 });
                 response.Permission.AddRange(permissions);
                 response.Succeed = true;
@@ -156,6 +197,45 @@ namespace CRUD_TEST.SERVICES.Services
             catch (Exception e)
             {
                 response.Error = new Error
+                {
+                    Name = e.Source,
+                    Detail = e.Message
+                };
+                return response;
+            }
+        }
+
+        public Response Select(int id)
+        {
+            var response = new Response{Action = "Select"};
+            try
+            {
+
+                var permission = _permissions.SingleOrDefault(p => p.Id == id);
+                if (permission == null)
+                {
+                    response.Error = new Error
+                    {
+                        Name = "NotFound",
+                        Detail = "The permission your are trying to edit can not be found"
+                    };
+                    return response;
+                }
+
+                response.Succeed = true;
+                var data = new PermissionDto
+                {
+                    EmployeeLastName = permission.EmployeeLastName,
+                    EmployeeName = permission.EmployeeName,
+                    PermissionTypeId = permission.PermissionTypeId,
+                    Id = permission.Id
+                };
+                response.Permission.Add(data);
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.Error= new Error
                 {
                     Name = e.Source,
                     Detail = e.Message

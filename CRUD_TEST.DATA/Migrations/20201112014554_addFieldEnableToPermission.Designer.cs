@@ -4,14 +4,16 @@ using CRUD_TEST.DATA.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CRUD_TEST.DATA.Migrations
 {
     [DbContext(typeof(ApplicationDbcontext))]
-    partial class ApplicationDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20201112014554_addFieldEnableToPermission")]
+    partial class addFieldEnableToPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +35,8 @@ namespace CRUD_TEST.DATA.Migrations
                     b.Property<string>("EmployeeName")
                         .IsRequired();
 
+                    b.Property<bool>("Enable");
+
                     b.Property<int>("PermissionTypeId");
 
                     b.HasKey("Id");
@@ -40,29 +44,6 @@ namespace CRUD_TEST.DATA.Migrations
                     b.HasIndex("PermissionTypeId");
 
                     b.ToTable("Permissions");
-                });
-
-            modelBuilder.Entity("CRUD_TEST.MODELS.Models.PermissionLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Action");
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<string>("EmployeeLastName")
-                        .IsRequired();
-
-                    b.Property<string>("EmployeeName")
-                        .IsRequired();
-
-                    b.Property<int>("PermissionTypeId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PermissionLogs");
                 });
 
             modelBuilder.Entity("CRUD_TEST.MODELS.Models.PermissionType", b =>

@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace CRUD_TEST.MODELS.Dtos
+﻿namespace CRUD_TEST.MODELS.Dtos
 {
     public class PermissionDto
     {
+        public int Id { get; set; }
         public string EmployeeName { get; set; }
         public int PermissionTypeId { get; set; }
         public string EmployeeLastName { get; set; }
