@@ -217,7 +217,7 @@ namespace CRUD_TEST.SERVICES.Services
                     response.Error = new Error
                     {
                         Name = "NotFound",
-                        Detail = "The permission your are trying to edit can not be found"
+                        Detail = "The permission your are trying to select can not be found"
                     };
                     return response;
                 }

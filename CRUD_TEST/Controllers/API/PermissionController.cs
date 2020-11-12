@@ -20,7 +20,14 @@ namespace CRUD_TEST.Controllers.API
         }
 
 
-        [HttpGet("all")]
+        [HttpGet("select/{id}")]
+        public Response Select(int id)
+        {
+            var response = _permissionServices.Select(id);
+            return response;
+        }
+
+        [HttpGet("select/all")]
         public Response All()
         {
             var response = _permissionServices.SelectAll();
