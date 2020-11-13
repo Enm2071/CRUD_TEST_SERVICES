@@ -39,7 +39,7 @@ namespace CRUD_TEST.SERVICES.Services
                 Date = DateTime.Now,
                 EmployeeLastName = data.EmployeeLastName,
                 EmployeeName = data.EmployeeName,
-                PermissionTypeId = data.PermissionTypeId
+                PermissionTypeId = data.PermissionType.Id
             };
 
             try

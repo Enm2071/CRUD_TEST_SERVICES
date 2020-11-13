@@ -44,7 +44,7 @@ namespace CRUD_TEST.SERVICES.Services
                 Date = DateTime.Now,
                 EmployeeLastName = data.EmployeeLastName,
                 EmployeeName = data.EmployeeName,
-                PermissionTypeId = data.PermissionTypeId
+                PermissionTypeId = data.PermissionType.Id
             };
             var response = new Response<PermissionDto> { Action = "Create" };
             try
@@ -75,7 +75,7 @@ namespace CRUD_TEST.SERVICES.Services
 
         public Response<PermissionDto> Delete(int id)
         {
-            var permission = _permissions.SingleOrDefault(p => p.Id == id);
+            var permission = _permissions.Include(pt=>pt.PermissionType).SingleOrDefault(p => p.Id == id);
             var response = new Response<PermissionDto> { Action = "Delete" };
 
             if (permission == null)
@@ -97,7 +97,7 @@ namespace CRUD_TEST.SERVICES.Services
                 {
                     EmployeeLastName = permission.EmployeeLastName,
                     EmployeeName = permission.EmployeeName,
-                    PermissionTypeId = permission.PermissionTypeId
+                    PermissionType = new PermissionTypeDto { Description = permission.PermissionType.Description, Id = permission.PermissionType.Id }
                 };
                 response.Body.Add(data);
 
@@ -127,7 +127,7 @@ namespace CRUD_TEST.SERVICES.Services
 
         public Response<PermissionDto> Update(PermissionDto data, int id)
         {
-            var permission = _permissions.SingleOrDefault(p => p.Id == id);
+            var permission = _permissions.Include(pt=>pt.PermissionType).SingleOrDefault(p => p.Id == id);
             var response = new Response<PermissionDto> { Action = "Update" };
 
             if (permission == null)
@@ -141,14 +141,14 @@ namespace CRUD_TEST.SERVICES.Services
             }
             var permissionLogData = new PermissionDto
             {
-                PermissionTypeId = permission.PermissionTypeId,
+                PermissionType = new PermissionTypeDto { Description = permission.PermissionType.Description, Id = permission.PermissionType.Id },
                 EmployeeLastName = permission.EmployeeLastName,
                 EmployeeName = permission.EmployeeName
             };
 
             permission.EmployeeLastName = data.EmployeeLastName;
             permission.EmployeeName = data.EmployeeName;
-            permission.PermissionTypeId = data.PermissionTypeId;
+            permission.PermissionTypeId = data.PermissionType.Id;
 
             try
             {
@@ -183,11 +183,11 @@ namespace CRUD_TEST.SERVICES.Services
             var response = new Response<PermissionDto> { Action = "GetAll" };
             try
             {
-                var permissions = _permissions.Select(p => new PermissionDto
+                var permissions = _permissions.Include(pt=>pt.PermissionType).Select(p => new PermissionDto
                 {
                     EmployeeLastName = p.EmployeeLastName,
                     EmployeeName = p.EmployeeName,
-                    PermissionTypeId = p.PermissionTypeId,
+                    PermissionType = new PermissionTypeDto{Description = p.PermissionType.Description,Id = p.PermissionType.Id},
                     Id = p.Id
                 });
                 response.Body.AddRange(permissions);
@@ -211,7 +211,7 @@ namespace CRUD_TEST.SERVICES.Services
             try
             {
 
-                var permission = _permissions.SingleOrDefault(p => p.Id == id);
+                var permission = _permissions.Include(pt=>pt.PermissionType).SingleOrDefault(p => p.Id == id);
                 if (permission == null)
                 {
                     response.Error = new Error
@@ -227,7 +227,7 @@ namespace CRUD_TEST.SERVICES.Services
                 {
                     EmployeeLastName = permission.EmployeeLastName,
                     EmployeeName = permission.EmployeeName,
-                    PermissionTypeId = permission.PermissionTypeId,
+                    PermissionType = new PermissionTypeDto { Description = permission.PermissionType.Description, Id = permission.PermissionType.Id },
                     Id = permission.Id
                 };
                 response.Body.Add(data);
