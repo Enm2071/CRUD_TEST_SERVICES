@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using CRUD_TEST.DATA.Context;
 using CRUD_TEST.DATA.Infraestructure;
 using CRUD_TEST.MODELS.Dtos;
@@ -10,6 +11,8 @@ namespace CRUD_TEST.SERVICES.Services
     public interface IPermissionTypeServices
     {
         void SavePermissionType();
+        void CreateDefaultValues();
+        Response<PermissionTypeDto> Create(PermissionTypeDto data);
         Response<PermissionTypeDto> GetAll();
     }
 
@@ -27,6 +30,57 @@ namespace CRUD_TEST.SERVICES.Services
         public void SavePermissionType()
         {
             _dbcontext.SaveChanges();
+        }
+
+        public void CreateDefaultValues()
+        {
+            if (_permissionTypes.Any()) return;
+            var permissionDefaultTypes = new List<PermissionTypeDto>
+            {
+                new PermissionTypeDto
+                {
+                    Description = "Illness"
+                },
+                new PermissionTypeDto
+                {
+                    Description = "Diligence"
+                },
+                new PermissionTypeDto
+                {
+                    Description = "Birthday"
+                }
+            };
+            foreach (var permission in permissionDefaultTypes)
+            {
+                Create(permission);
+            }
+
+        }
+
+        public Response<PermissionTypeDto> Create(PermissionTypeDto data)
+        {
+            var response = new Response<PermissionTypeDto>{Action = "Create"};
+            var newData = new PermissionType
+            {
+                Description = data.Description
+            };
+            try
+            {
+                _permissionTypes.Add(newData);
+                SavePermissionType();
+                response.Succeed = true;
+                response.Body.Add(data);
+                return response;
+            }
+            catch (System.Exception e)
+            {
+                response.Error = new Error
+                {
+                    Name = e.Source,
+                    Detail = e.Message
+                };
+                return response;
+            }
         }
 
         public Response<PermissionTypeDto> GetAll()
