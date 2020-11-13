@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CRUD_TEST.Controllers.API
 {
     [Route("api/permissionType")]
-    [EnableCors]
+    [EnableCors("MyPolicy")]
     [ApiController]
     public class PermissionTypeController : ControllerBase
     {
