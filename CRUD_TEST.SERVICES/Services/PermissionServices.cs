@@ -73,9 +73,9 @@ namespace CRUD_TEST.SERVICES.Services
 
         }
 
-        public Response<PermissionDto> Delete(int id)
+        public Response<PermissionDto> Delete(int id = 0)
         {
-            var permission = _permissions.Include(pt=>pt.PermissionType).SingleOrDefault(p => p.Id == id);
+            var permission = _permissions.Include(pt => pt.PermissionType).SingleOrDefault(p => p.Id == id);
             var response = new Response<PermissionDto> { Action = "Delete" };
 
             if (permission == null)
@@ -127,7 +127,7 @@ namespace CRUD_TEST.SERVICES.Services
 
         public Response<PermissionDto> Update(PermissionDto data, int id)
         {
-            var permission = _permissions.Include(pt=>pt.PermissionType).SingleOrDefault(p => p.Id == id);
+            var permission = _permissions.Include(pt => pt.PermissionType).SingleOrDefault(p => p.Id == id);
             var response = new Response<PermissionDto> { Action = "Update" };
 
             if (permission == null)
@@ -183,11 +183,11 @@ namespace CRUD_TEST.SERVICES.Services
             var response = new Response<PermissionDto> { Action = "GetAll" };
             try
             {
-                var permissions = _permissions.Include(pt=>pt.PermissionType).Select(p => new PermissionDto
+                var permissions = _permissions.Include(pt => pt.PermissionType).Select(p => new PermissionDto
                 {
                     EmployeeLastName = p.EmployeeLastName,
                     EmployeeName = p.EmployeeName,
-                    PermissionType = new PermissionTypeDto{Description = p.PermissionType.Description,Id = p.PermissionType.Id},
+                    PermissionType = new PermissionTypeDto { Description = p.PermissionType.Description, Id = p.PermissionType.Id },
                     Id = p.Id
                 });
                 response.Body.AddRange(permissions);
@@ -211,7 +211,7 @@ namespace CRUD_TEST.SERVICES.Services
             try
             {
 
-                var permission = _permissions.Include(pt=>pt.PermissionType).SingleOrDefault(p => p.Id == id);
+                var permission = _permissions.Include(pt => pt.PermissionType).SingleOrDefault(p => p.Id == id);
                 if (permission == null)
                 {
                     response.Error = new Error
